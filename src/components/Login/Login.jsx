@@ -1,8 +1,17 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
+import { AuthContext } from '../../providers/AuthProviders';
 
 const Login = () => {
+    const [show, setShow] = useState(false);
+
+    const {signIn} = useContext(AuthContext);
+    const navigate = useNavigate();
+    const location = useLocation();
+    console.log(location);
+
+    const from = location.state?.from?.pathname || '/';
 
     const handleSignIn = event => {
         event.preventDefault();
@@ -12,12 +21,23 @@ const Login = () => {
         const password = form.password.value;
         console.log(email, password);
         form.reset();
+
+        signIn(email, password)
+        .then(result => {
+            const loggedUser = result.user;
+            console.log(loggedUser);
+            form.reset();
+            navigate(from, { replace: true });
+        })
+        .catch(error => {
+            console.log(error);
+        })
     }
     return (
         <div className="hero min-h-screen bg-base-200">
             <div className="hero-content flex-col lg:flex-row-reverse">
                 <div className="text-center lg:text-left">
-                    <h1 className="text-5xl font-bold">Login Here!</h1>
+                    <h1 className="text-5xl font-bold">Hey... <br/>Login Here Now!</h1>
                 </div>
                 <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
                     <form onSubmit={handleSignIn} className="card-body">
@@ -25,13 +45,18 @@ const Login = () => {
                             <label className="label">
                                 <span className="label-text">Email</span>
                             </label>
-                            <input type="email" name="email" placeholder="email" className="input input-bordered" />
+                            <input type="email" name="email" placeholder="Enter email address" className="input input-bordered" />
                         </div>
                         <div className="form-control">
                             <label className="label">
                                 <span className="label-text">Password</span>
                             </label>
-                            <input type="password" name="password" placeholder="password" className="input input-bordered" />
+                            <input type={show ? "text" : "password"} name="password" placeholder="Enter your password" className="input input-bordered" />
+                            <p onClick={() => setShow(!show)} className='text-end text-blue-700'><small>
+                                {
+                                    show ? <span>Hide Password</span> : <span>Show Password</span>
+                                }
+                                </small></p>
                             <label className="label">
                                 <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
                             </label>
