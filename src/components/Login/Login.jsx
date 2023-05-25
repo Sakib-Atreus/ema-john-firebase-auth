@@ -6,7 +6,8 @@ import { AuthContext } from '../../providers/AuthProviders';
 const Login = () => {
     const [show, setShow] = useState(false);
 
-    const {signIn} = useContext(AuthContext);
+    const { signIn, signInWithGoogle } = useContext(AuthContext);
+
     const navigate = useNavigate();
     const location = useLocation();
     console.log(location);
@@ -33,6 +34,18 @@ const Login = () => {
             console.log(error);
         })
     }
+
+    const handleGoogleSignIn = () => {
+        signInWithGoogle()
+        .then(result => {
+            const loggedUser = result.user;
+            console.log(loggedUser);
+        })
+        .catch(error => {
+            console.log(error);
+        })
+    }
+
     return (
         <div className="hero min-h-screen bg-base-200">
             <div className="hero-content flex-col lg:flex-row-reverse">
@@ -68,7 +81,7 @@ const Login = () => {
                             <p className='text-gray-500 text-2xl'>___________ or ___________</p>
                         </div>
                         <div className="form-control mt-6">
-                            <button className="btn bg-white text-black hover:text-white"><FcGoogle className='me-2 text-xl'/> Login with Google</button>
+                            <button onClick={handleGoogleSignIn} className="btn bg-white text-black hover:text-white"><FcGoogle className='me-2 text-xl'/> Login with Google</button>
                         </div>
                     </form>
                     <p><small>New to Ema-John? <Link to="/signup" className='btn-link'>Create New Account</Link></small></p>
